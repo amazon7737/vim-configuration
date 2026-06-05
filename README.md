@@ -8,6 +8,11 @@ vim location
 usr/share/vim/vim90
 ```
 
+## tmux helper
+
+- Guide: [`tmuxh.md`](tmuxh.md)
+- `tmuxh` prints current tmux sessions and a quick command guide.
+
 ## iTerm2 theme
 
 - Theme file: `iterm2/Warm-Charcoal.itermcolors`
