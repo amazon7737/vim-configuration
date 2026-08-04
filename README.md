@@ -8,6 +8,28 @@ vim location
 usr/share/vim/vim90
 ```
 
+## tmux + Claude Code agents
+
+- Guide: [`tmux-agents.md`](tmux-agents.md)
+- Install: `./install-tmux-agents.sh --dry-run` then `./install-tmux-agents.sh`
+
+Runs many Claude Code agents in one iTerm2 window, and survives a reboot.
+
+- `tmux` is wrapped so session commands (`new` / `attach` / `a`) open in
+  iTerm2 control mode (`-CC`) automatically — native tabs, scroll and copy.
+  Left alone for `ls` / `kill-session`, inside tmux, over SSH, or with `TMUX_NO_CC=1`.
+- `agents` — enter the agent session (`tmux new-session -A -s agents`)
+- `claude-snapshot` / `claude-restore` — record which Claude Code sessions are
+  running where, and bring them all back after a reboot. A LaunchAgent snapshots
+  every 5 minutes.
+
+```text
+tmux/tmux.conf                            → ~/.tmux.conf
+zsh/tmux-agents.zsh                       → ~/.zshrc (or ~/.config/zsh/)
+bin/claude-snapshot, bin/claude-restore   → ~/.local/bin/
+launchd/com.local.claude-snapshot.plist   → ~/Library/LaunchAgents/
+```
+
 ## tmux helper
 
 - Guide: [`tmuxh.md`](tmuxh.md)
