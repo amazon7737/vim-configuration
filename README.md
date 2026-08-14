@@ -1,85 +1,53 @@
 # vim-configuration
 
-```text
-.vimrc
-.vim/colors
-
-vim location
-usr/share/vim/vim90
-```
-
-## tmux + Claude Code agents
-
-- Guide: [`tmux-agents.md`](tmux-agents.md)
-- Install: `./install-tmux-agents.sh --dry-run` then `./install-tmux-agents.sh`
-
-Runs many Claude Code agents in one iTerm2 window, and survives a reboot.
-
-- `tmux` is wrapped so session commands (`new` / `attach` / `a`) open in
-  iTerm2 control mode (`-CC`) automatically — native tabs, scroll and copy.
-  Left alone for `ls` / `kill-session`, inside tmux, over SSH, or with `TMUX_NO_CC=1`.
-- `agents` — enter the agent session (`tmux new-session -A -s agents`)
-- `claude-snapshot` / `claude-restore` — record which Claude Code sessions are
-  running where, and bring them all back after a reboot. A LaunchAgent snapshots
-  every 5 minutes.
+Personal vim and terminal configuration.
 
 ```text
-tmux/tmux.conf                            → ~/.tmux.conf
-zsh/tmux-agents.zsh                       → ~/.zshrc (or ~/.config/zsh/)
-bin/claude-snapshot, bin/claude-restore   → ~/.local/bin/
-launchd/com.local.claude-snapshot.plist   → ~/Library/LaunchAgents/
+.vimrc            → ~/.vimrc
+ghostty/config    → ~/.config/ghostty/config
 ```
 
-## tmux helper
+Vim runtime lives at `/usr/share/vim/vim90`; colorschemes go in `~/.vim/colors`.
 
-- Guide: [`tmuxh.md`](tmuxh.md)
-- `tmuxh` prints current tmux sessions and a quick command guide.
+## Ghostty
 
-## iTerm2 theme
-
-- Theme file: `iterm2/Warm-Charcoal.itermcolors`
-
-Apply in iTerm2:
-
-1. Open iTerm2 Settings: `Cmd + ,`
-2. Go to **Profiles → Colors**
-3. Click **Color Presets… → Import…**
-4. Select `iterm2/Warm-Charcoal.itermcolors`
-5. Choose **Color Presets… → Warm-Charcoal**
-
-Palette:
-
-```text
-Background:           #151515
-Foreground:           #D8D5CF
-Bold / Accent:        #CDA66B
-Selection Background: #303030
-Selection Foreground: #F2EEE6
-Cursor:               #F2E8D5
-Cursor Text:          #151515
-```
-
-## iTerm2 full settings backup
-
-- Settings file: `iterm2/com.googlecode.iterm2.plist` (profiles, key bindings, colors — machine-specific `NoSync*`/window-position keys stripped)
-
-Restore on a new Mac — option A (one-shot import):
-
-1. Quit iTerm2 completely (`Cmd + Q`)
-2. `defaults import com.googlecode.iterm2 iterm2/com.googlecode.iterm2.plist`
-3. Launch iTerm2
-
-Restore on a new Mac — option B (keep synced with this repo):
-
-1. Clone this repo
-2. iTerm2 Settings → **General → Settings** (or **Preferences**)
-3. Check **Load preferences from a custom folder or URL** and select the repo's `iterm2/` folder
-4. Restart iTerm2
-
-To update the backup later:
+Terminal is [Ghostty](https://ghostty.org). Font is Monaco with Hangul
+codepoints remapped to D2Coding, so Korean stays exactly double-width and
+box-drawing characters line up.
 
 ```sh
-defaults export com.googlecode.iterm2 - | plutil -convert xml1 -o iterm2/com.googlecode.iterm2.plist -
+brew install --cask ghostty font-d2coding
+cp ghostty/config ~/.config/ghostty/config
 ```
 
-(then review the diff for anything private before pushing — this repo is public)
+Reload a running Ghostty with `Cmd + Shift + ,`.
+
+Useful commands:
+
+```sh
+ghostty +list-themes       # 463 built-in themes, with live preview
+ghostty +list-fonts        # monospace fonts Ghostty can see
+ghostty +validate-config
+```
+
+The `ghostty` binary lives inside the app bundle
+(`/Applications/Ghostty.app/Contents/MacOS/ghostty`) and is not on `PATH` by
+default.
+
+## History
+
+Earlier revisions of this repo held a tmux + iTerm2 setup for running many
+Claude Code agents: a `tmux` wrapper that forced iTerm2 control mode (`-CC`),
+an `agents` entry point, and `claude-snapshot` / `claude-restore` with a
+LaunchAgent that recorded running sessions every five minutes so a reboot
+could be undone.
+
+That stack was dropped in favour of Ghostty plus
+[cmux](https://github.com/manaflow-ai/cmux), which tracks agent sessions
+through hooks rather than by inspecting processes. The tmux and iTerm2 files
+are still in git history if a Linux box ever needs them:
+
+```sh
+git log --oneline -- tmux/ zsh/ bin/ launchd/ iterm2/
+git show d6d623e:tmux/tmux.conf
+```
