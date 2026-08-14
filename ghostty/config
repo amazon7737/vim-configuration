@@ -15,3 +15,6 @@ window-padding-y = 4
 
 macos-option-as-alt = true
 mouse-hide-while-typing = true
+
+keybind = cmd+shift+left=previous_tab
+keybind = cmd+shift+right=next_tab
